@@ -3,7 +3,7 @@ import { openDB, DBSchema, IDBPDatabase } from 'idb';
 // Inventory items now track quantity in stock. "category" and "cost" are optional fields
 // because the live site only requires name, quantity and price. We keep category and cost
 // for backwards compatibility but they may not be used in the UI. Quantity is required.
-interface InventoryItem {
+export type InventoryItem = {
   id: string;
   name: string;
   category?: string;
@@ -11,7 +11,7 @@ interface InventoryItem {
   cost?: number;
   // number of units in stock for this item
   quantity: number;
-}
+};
 
 interface SaleRecord {
   saleId?: number;
