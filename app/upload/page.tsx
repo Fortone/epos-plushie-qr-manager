@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import Papa from 'papaparse';
+import Papa, { ParseResult } from 'papaparse';
 import * as XLSX from 'xlsx';
 import { addInventoryItems, clearInventory } from '@/utils/db';
 
@@ -14,7 +14,7 @@ export default function UploadPage() {
       Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
-        complete: (results: Papa.ParseResult<any>) => {
+        complete: (results: ParseResult<any>) => {
           resolve(results.data);
         },
         error: (err) => reject(err),
@@ -107,8 +107,8 @@ export default function UploadPage() {
             quantity,
             price,
             // optional fields retained for compatibility
-            category: undefined,
-            cost: undefined,
+            category: 'Uncategorized',
+            cost: 0,
           };
         });
       await addInventoryItems(items);

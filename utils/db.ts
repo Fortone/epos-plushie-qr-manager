@@ -1,17 +1,17 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 
-// Inventory items now track quantity in stock. "category" and "cost" are optional fields
-// because the live site only requires name, quantity and price. We keep category and cost
-// for backwards compatibility but they may not be used in the UI. Quantity is required.
-export interface InventoryItem {
+// Inventory items now track quantity in stock. "category" is optional in uploaded data
+// but we normalize it to a string. "cost" is required for sales records so we normalize
+// it to 0 when missing in stored inventory rows. Quantity is required.
+export type InventoryItem = {
   id: string;
   name: string;
-  category?: string;
+  category: string;
   price: number;
-  cost?: number;
+  cost: number;
   // number of units in stock for this item
   quantity: number;
-}
+};
 
 interface SaleRecord {
   saleId?: number;
@@ -59,7 +59,12 @@ export async function addInventoryItems(items: InventoryItem[]): Promise<void> {
   const db = await getDb();
   const tx = db.transaction('inventory', 'readwrite');
   for (const item of items) {
-    await tx.store.put(item);
+    const normalized: InventoryItem = {
+      ...item,
+      category: item.category ?? 'Uncategorized',
+      cost: item.cost ?? 0,
+    };
+    await tx.store.put(normalized);
   }
   await tx.done;
 }
@@ -70,7 +75,12 @@ export async function updateInventoryItem(id: string, updated: Partial<Inventory
   const tx = db.transaction('inventory', 'readwrite');
   const current = await tx.store.get(id);
   if (current) {
-    const updatedItem: InventoryItem = { ...current, ...updated } as InventoryItem;
+    const updatedItem: InventoryItem = {
+      ...current,
+      ...updated,
+      category: updated.category ?? current.category ?? 'Uncategorized',
+      cost: updated.cost ?? current.cost ?? 0,
+    } as InventoryItem;
     await tx.store.put(updatedItem);
   }
   await tx.done;
@@ -78,7 +88,12 @@ export async function updateInventoryItem(id: string, updated: Partial<Inventory
 
 export async function getInventoryItems(): Promise<InventoryItem[]> {
   const db = await getDb();
-  return await db.getAll('inventory');
+  const items = await db.getAll('inventory');
+  return items.map((item) => ({
+    ...item,
+    category: item.category ?? 'Uncategorized',
+    cost: item.cost ?? 0,
+  }));
 }
 
 export async function clearInventory(): Promise<void> {
