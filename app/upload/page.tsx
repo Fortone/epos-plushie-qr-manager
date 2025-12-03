@@ -108,7 +108,7 @@ export default function UploadPage() {
             price,
             // optional fields retained for compatibility
             category: 'Uncategorized',
-            cost: undefined,
+            cost: 0,
           };
         });
       await addInventoryItems(items);
