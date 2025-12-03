@@ -107,7 +107,7 @@ export default function UploadPage() {
             quantity,
             price,
             // optional fields retained for compatibility
-            category: undefined,
+            category: 'Uncategorized',
             cost: undefined,
           };
         });
