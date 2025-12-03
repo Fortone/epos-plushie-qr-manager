@@ -19,8 +19,9 @@ export default function QrSheetPage() {
 
   // Group items by category
   const grouped = items.reduce<Record<string, InventoryItem[]>>((acc, item) => {
-    acc[item.category] = acc[item.category] || [];
-    acc[item.category].push(item);
+    const category = item.category ?? 'Uncategorized';
+    acc[category] = acc[category] || [];
+    acc[category].push(item);
     return acc;
   }, {});
 
