@@ -6,7 +6,7 @@ import { openDB, DBSchema, IDBPDatabase } from 'idb';
 export type InventoryItem = {
   id: string;
   name: string;
-  category?: string;
+  category: string;
   price: number;
   cost?: number;
   // number of units in stock for this item
@@ -59,7 +59,11 @@ export async function addInventoryItems(items: InventoryItem[]): Promise<void> {
   const db = await getDb();
   const tx = db.transaction('inventory', 'readwrite');
   for (const item of items) {
-    await tx.store.put(item);
+    const normalized: InventoryItem = {
+      ...item,
+      category: item.category ?? 'Uncategorized',
+    };
+    await tx.store.put(normalized);
   }
   await tx.done;
 }
@@ -70,7 +74,11 @@ export async function updateInventoryItem(id: string, updated: Partial<Inventory
   const tx = db.transaction('inventory', 'readwrite');
   const current = await tx.store.get(id);
   if (current) {
-    const updatedItem: InventoryItem = { ...current, ...updated } as InventoryItem;
+    const updatedItem: InventoryItem = {
+      ...current,
+      ...updated,
+      category: updated.category ?? current.category ?? 'Uncategorized',
+    } as InventoryItem;
     await tx.store.put(updatedItem);
   }
   await tx.done;
@@ -78,7 +86,11 @@ export async function updateInventoryItem(id: string, updated: Partial<Inventory
 
 export async function getInventoryItems(): Promise<InventoryItem[]> {
   const db = await getDb();
-  return await db.getAll('inventory');
+  const items = await db.getAll('inventory');
+  return items.map((item) => ({
+    ...item,
+    category: item.category ?? 'Uncategorized',
+  }));
 }
 
 export async function clearInventory(): Promise<void> {
