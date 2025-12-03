@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getInventoryItems } from '@/utils/db';
-import { QRCode } from 'qrcode.react';
+import QRCode from 'qrcode.react';
 
 interface InventoryItem {
   id: string;
