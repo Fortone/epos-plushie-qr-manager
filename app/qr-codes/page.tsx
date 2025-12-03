@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getInventoryItems } from '@/utils/db';
-import { QRCode } from 'qrcode.react';
+import QRCode from 'qrcode.react';
 
 // This page displays printable QR codes for each product. We group by category
 // if category information exists, otherwise show all items in a single group.
