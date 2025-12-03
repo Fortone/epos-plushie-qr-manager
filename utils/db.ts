@@ -1,14 +1,14 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 
-// Inventory items now track quantity in stock. "category" and "cost" are optional fields
-// because the live site only requires name, quantity and price. We keep category and cost
-// for backwards compatibility but they may not be used in the UI. Quantity is required.
+// Inventory items now track quantity in stock. "category" is optional in uploaded data
+// but we normalize it to a string. "cost" is required for sales records so we normalize
+// it to 0 when missing in stored inventory rows. Quantity is required.
 export type InventoryItem = {
   id: string;
   name: string;
   category: string;
   price: number;
-  cost?: number;
+  cost: number;
   // number of units in stock for this item
   quantity: number;
 };
