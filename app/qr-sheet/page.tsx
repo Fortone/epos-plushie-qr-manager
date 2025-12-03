@@ -1,16 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { getInventoryItems } from '@/utils/db';
+import { getInventoryItems, type InventoryItem } from '@/utils/db';
 import QRCode from 'qrcode.react';
-
-interface InventoryItem {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  cost: number;
-}
 
 export default function QrSheetPage() {
   const [items, setItems] = useState<InventoryItem[]>([]);
