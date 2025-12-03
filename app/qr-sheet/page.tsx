@@ -1,16 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { getInventoryItems } from '@/utils/db';
+import { getInventoryItems, type InventoryItem } from '@/utils/db';
 import QRCode from 'qrcode.react';
-
-interface InventoryItem {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  cost: number;
-}
 
 export default function QrSheetPage() {
   const [items, setItems] = useState<InventoryItem[]>([]);
@@ -27,8 +19,9 @@ export default function QrSheetPage() {
 
   // Group items by category
   const grouped = items.reduce<Record<string, InventoryItem[]>>((acc, item) => {
-    acc[item.category] = acc[item.category] || [];
-    acc[item.category].push(item);
+    const category = item.category ?? 'Uncategorized';
+    acc[category] = acc[category] || [];
+    acc[category].push(item);
     return acc;
   }, {});
 
