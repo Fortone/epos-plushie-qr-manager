@@ -66,7 +66,7 @@ export default function ScanPage() {
           itemId: item.id,
           name: item.name,
           price: item.price,
-          cost: item.cost,
+          cost: item.cost ?? 0,
           timestamp: new Date().toISOString(),
         };
         await addSale(sale);
